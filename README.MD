@@ -5,11 +5,11 @@ An intelligent AI-driven platform that translates rare-disease genetic variants 
 ## The Innovation
 While standard tools provide 1D pathogenicity scores, this platform introduces **Spatial Proximity Analysis**. It calculates 3D distances between multiple mutations to identify "Synergistic Hotspots"—clusters of variants that sit near each other in 3D space even if they are far apart in the linear protein sequence. [web:109][web:151]
 
-## Team Members
+## 👥 Team Members
 - Moinuddin Hasan Raichur Mohammed
 - Aaditya Tripathi
 - Aditya Sridhar
-- Gouree Nair
+- Goureesankar S Nair
 
 ## Core Workflow
 1. **Input**: User provides a Gene Symbol (e.g., *ALS2*) or a list of missense variants.
@@ -32,3 +32,10 @@ While standard tools provide 1D pathogenicity scores, this platform introduces *
 
 ## Disclaimer
 This tool is for research and educational purposes only. It uses AI predictions from the AlphaFold Database and AlphaMissense, which have varying levels of confidence and are not approved for clinical diagnostic use. [web:63][page:5]
+
+## 👨‍💻 My Contribution
+
+- Contributed as part of a 4-member team during the AI Hackathon – India AI Impact Summit 2026 (3rd Place).
+- Worked on backend integration using Python and FastAPI.
+- Assisted in implementing spatial proximity analysis for identifying mutation clusters ("synergistic hotspots").
+- Collaborated on designing and presenting the solution under hackathon conditions.

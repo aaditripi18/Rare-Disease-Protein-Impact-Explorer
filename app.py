@@ -10,8 +10,8 @@ from streamlit_molstar import st_molstar
 from src.logic_engine import *
 from src.agent import load_overview_text, run_groq_agent, DEFAULT_MODEL
 
-# NOTE: Storing API keys in code is insecure. Prefer env vars or Streamlit secrets.
-GROQ_API_KEY = "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"
+# Groq key comes from the environment (or Streamlit secrets below), never from code.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 try:
     import vl_convert as vl
 except Exception:
@@ -453,9 +453,14 @@ if st.session_state.run_analysis:
                     submitted = st.form_submit_button("Ask Agent")
 
                 if submitted:
-                    api_key = GROQ_API_KEY or st.secrets.get("GROQ_API_KEY") or os.environ.get("GROQ_API_KEY")
+                    api_key = GROQ_API_KEY
                     if not api_key:
-                        st.warning("Add your Groq API key in the sidebar or set GROQ_API_KEY.")
+                        try:
+                            api_key = st.secrets.get("GROQ_API_KEY", "")
+                        except Exception:
+                            api_key = ""
+                    if not api_key:
+                        st.warning("Set GROQ_API_KEY as an environment variable or in .streamlit/secrets.toml.")
                     else:
                         with st.spinner("Thinking..."):
                             answer = run_groq_agent(

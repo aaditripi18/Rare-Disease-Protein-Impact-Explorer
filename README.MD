@@ -1,41 +1,80 @@
 # Rare-Disease Protein Impact Explorer 🧬
 
-An intelligent AI-driven platform that translates rare-disease genetic variants into 3D structural insights. By integrating AlphaFold's protein modeling with AlphaMissense pathogenicity predictions, this tool helps researchers visualize how specific mutations physically disrupt protein function. [web:63][web:136]
+> 🥉 **3rd Place, AI Hackathon at the India AI Impact Summit 2026**, built in a four-person team.
+> This is my fork of the team repository, [Moinuddin-Hasan/Rare-Disease-Protein-Impact-Explorer](https://github.com/Moinuddin-Hasan/Rare-Disease-Protein-Impact-Explorer).
 
-## The Innovation
-While standard tools provide 1D pathogenicity scores, this platform introduces **Spatial Proximity Analysis**. It calculates 3D distances between multiple mutations to identify "Synergistic Hotspots"—clusters of variants that sit near each other in 3D space even if they are far apart in the linear protein sequence. [web:109][web:151]
+Pick a rare disease or type a gene, and the app shows where the dangerous mutations sit on the protein's 3D structure, and which of them cluster together in space.
 
-## 👥 Team Members
+Pathogenicity scores such as AlphaMissense rate one variant at a time, along the sequence. Two residues that are 200 positions apart in the sequence can still touch once the protein folds. The app puts each residue's AlphaMissense score onto its AlphaFold structure and clusters the high-risk residues by 3D distance. That surfaces **structural hotspots** that a sequence-only view misses.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Disease or gene<br/>Orphanet catalogue] --> B[UniProt accession<br/>UniProt REST API]
+    B --> C[Predicted structure<br/>AlphaFold DB]
+    B --> D[Variant scores<br/>AlphaMissense]
+    C --> E[3D hotspot clustering<br/>DBSCAN on Cα coordinates]
+    D --> E
+    E --> F[3D view, plots,<br/>PDF report, Q&A agent]
+```
+
+1. **Disease → gene.** The Orphanet rare-disease catalogue maps each disorder to its primary gene, and the reverse. A gene symbol or UniProt accession can also be typed directly.
+2. **Gene → protein.** The UniProt REST API resolves the human gene to its accession.
+3. **Structure.** The predicted model is downloaded from the AlphaFold DB, along with its per-residue confidence (pLDDT).
+4. **Variant risk.** AlphaMissense scores for that protein are streamed in chunks out of the 600 MB+ genome-wide file, then cached per protein so a second lookup is instant.
+5. **Hotspots.** Residues with an AlphaMissense score above 0.6 are placed at their Cα coordinates and clustered with DBSCAN (10 Å radius, at least 3 residues). Each cluster is a group of high-risk residues that are close together in the folded protein.
+
+## What you see
+
+- **Interactive 3D structure** (Mol\* and py3Dmol) with toggleable layers: hotspot overlay, AlphaMissense risk, Kyte-Doolittle hydrophobicity, secondary structure and pLDDT confidence bands.
+- **Instability plot**: AlphaMissense score along the sequence, so peaks line up with residue positions.
+- **Model confidence plot**: pLDDT per residue, so low-confidence regions aren't over-read.
+- **Summary and export**: mean pathogenicity, number of hotspot clusters and a status band, downloadable as JSON or as a PDF report with the plots.
+- **Ask the agent**: a Groq-hosted Llama 3.1 assistant that answers questions about the current protein, using the analysis on screen and a small knowledge base as context.
+
+## Run it locally
+
+```bash
+git clone https://github.com/aaditripi18/Rare-Disease-Protein-Impact-Explorer.git
+cd Rare-Disease-Protein-Impact-Explorer
+pip install -r requirements.txt
+```
+
+The two large data files are not in the repository. Download them first:
+
+| File | Put it at | Source |
+|---|---|---|
+| `AlphaMissense_hg38.tsv.gz` | `data/raw/` | [AlphaMissense predictions](https://zenodo.org/records/8208688) |
+| `en_product6.xml` (genes associated with rare disorders) | `data/references/` | [Orphadata](https://www.orphadata.com/genes/) |
+
+For the Q&A agent, set a [Groq](https://console.groq.com) API key. Everything else works without one.
+
+```bash
+export GROQ_API_KEY=your_key_here
+streamlit run app.py
+```
+
+## Tech stack
+
+Python · Streamlit · Biopython · scikit-learn (DBSCAN) · pandas · Altair · Mol\* / py3Dmol · FPDF · Groq API.
+Data: Orphanet · UniProt · AlphaFold DB · AlphaMissense.
+
+## Team
+
 - Moinuddin Hasan Raichur Mohammed
 - Aaditya Tripathi
 - Aditya Sridhar
 - Goureesankar S Nair
 
-## Core Workflow
-1. **Input**: User provides a Gene Symbol (e.g., *ALS2*) or a list of missense variants.
-2. **Translation**: The app queries the **UniProt REST API** to map gene names to Protein Accession IDs. [web:128]
-3. **Modeling**: The system fetches 3D structures from the **AlphaFold DB** (CC-BY-4.0). [web:64]
-4. **Analysis**: **AlphaMissense** scores are mapped onto the 3D structure, highlighting "Likely Pathogenic" regions in red. [web:90][web:136]
-5. **Visualization**: Interactive 3D rendering is provided via the **Mol* Viewer**. [web:109]
+### My contribution
 
-## Installation & Setup
-1. Clone the repository: `git clone https://github.com/your-repo/rare-disease-explorer.git`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the application: `streamlit run app.py`
+- Worked on the Python backend integration for the analysis pipeline.
+- Helped implement the spatial proximity analysis that finds 3D mutation clusters (hotspots).
+- Co-designed and presented the solution at the hackathon.
 
-## Technologies Used
-- **Frontend**: Streamlit (Apache-2.0) [web:103]
-- **Backend**: Python, FastAPI (MIT) [web:108]
-- **Bioinformatics**: Biopython, UniProt API [web:118]
-- **3D Rendering**: Mol* (MIT) [web:109]
-- **AI Models**: AlphaFold2, AlphaMissense [web:76][web:84]
+## Limitations
 
-## Disclaimer
-This tool is for research and educational purposes only. It uses AI predictions from the AlphaFold Database and AlphaMissense, which have varying levels of confidence and are not approved for clinical diagnostic use. [web:63][page:5]
-
-## 👨‍💻 My Contribution
-
-- Contributed as part of a 4-member team during the AI Hackathon – India AI Impact Summit 2026 (3rd Place).
-- Worked on backend integration using Python and FastAPI.
-- Assisted in implementing spatial proximity analysis for identifying mutation clusters ("synergistic hotspots").
-- Collaborated on designing and presenting the solution under hackathon conditions.
+- AlphaFold structures and AlphaMissense scores are **predictions**, not experimental data. Hotspots inside low-pLDDT regions should be treated with caution.
+- The 0.6 risk cutoff and the DBSCAN settings were chosen during the hackathon. They have not been tuned or validated against clinical labels such as ClinVar.
+- For research and education only. Not for clinical diagnosis.

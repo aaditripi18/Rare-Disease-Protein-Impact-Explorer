@@ -66,9 +66,9 @@ Data: Orphanet · UniProt · AlphaFold DB · AlphaMissense.
 
 ### My contribution
 
-- Worked on the Python backend integration for the analysis pipeline.
-- Helped implement the spatial proximity analysis that finds 3D mutation clusters (hotspots).
-- Co-designed and presented the solution at the hackathon.
+- **ML analysis.** Worked with the team on the machine-learning side: mapping AlphaMissense pathogenicity predictions onto AlphaFold structures, and the DBSCAN clustering that finds 3D mutation hotspots (risk cutoff, cluster radius and minimum cluster size).
+- **Data pipeline.** Worked on the Python backend that links Orphanet, UniProt, AlphaFold DB and AlphaMissense, including chunked reading and per-protein caching of the large AlphaMissense file.
+- **Design and pitch.** Co-designed the solution and presented it to the judges.
 
 ## Limitations
 

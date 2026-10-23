@@ -31,7 +31,7 @@ flowchart LR
 - **Instability plot**: AlphaMissense score along the sequence, so peaks line up with residue positions.
 - **Model confidence plot**: pLDDT per residue, so low-confidence regions aren't over-read.
 - **Summary and export**: mean pathogenicity, number of hotspot clusters and a status band, downloadable as JSON or as a PDF report with the plots.
-- **Ask the agent**: a Groq-hosted Llama 3.1 assistant that answers questions about the current protein, using the analysis on screen and a small knowledge base as context.
+- **Ask the agent**: a Groq-hosted Llama 3.1 assistant that answers questions about the current protein, using the analysis on screen and a small knowledge base as context. Optional: it needs a `GROQ_API_KEY`.
 
 ## Run it locally
 
@@ -48,10 +48,7 @@ The two large data files are not in the repository. Download them first:
 | `AlphaMissense_hg38.tsv.gz` | `data/raw/` | [AlphaMissense predictions](https://zenodo.org/records/8208688) |
 | `en_product6.xml` (genes associated with rare disorders) | `data/references/` | [Orphadata](https://www.orphadata.com/genes/) |
 
-For the Q&A agent, set a [Groq](https://console.groq.com) API key. Everything else works without one.
-
 ```bash
-export GROQ_API_KEY=your_key_here
 streamlit run app.py
 ```
 
